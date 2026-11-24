@@ -7,3 +7,4 @@ models/*
 !models/release/
 *.log
 .DS_Store
+!models/tokenizer.json

@@ -1,0 +1,160 @@
+{
+ "files": 13016,
+ "train_files": 12128,
+ "val_files": 179,
+ "test_files": 709,
+ "train_tokens": 24197288,
+ "val_tokens": 800270,
+ "test_tokens": 1677739,
+ "vocab_size": 2048,
+ "train_bytes": 81406633,
+ "val_bytes": 2210862,
+ "test_bytes": 5170640,
+ "bytes_per_token": {
+  "train": 3.3643,
+  "val": 2.7626,
+  "test": 3.0819
+ },
+ "round_trip_exact": true,
+ "max_token_id": 2047,
+ "special_tokens": {
+  "bof": 0,
+  "eof": 1
+ },
+ "repos": {
+  "train": {
+   "apache/commons-lang": {
+    "files": 603,
+    "tokens": 1863424,
+    "bytes": 6106278
+   },
+   "apache/commons-collections": {
+    "files": 660,
+    "tokens": 1289107,
+    "bytes": 4574201
+   },
+   "apache/commons-io": {
+    "files": 570,
+    "tokens": 1248956,
+    "bytes": 4224394
+   },
+   "apache/commons-text": {
+    "files": 206,
+    "tokens": 527529,
+    "bytes": 1678873
+   },
+   "apache/commons-compress": {
+    "files": 663,
+    "tokens": 1599951,
+    "bytes": 5158740
+   },
+   "apache/commons-csv": {
+    "files": 52,
+    "tokens": 139108,
+    "bytes": 438650
+   },
+   "apache/commons-cli": {
+    "files": 84,
+    "tokens": 223719,
+    "bytes": 738273
+   },
+   "google/guava": {
+    "files": 1481,
+    "tokens": 3932428,
+    "bytes": 12210958
+   },
+   "google/guice": {
+    "files": 603,
+    "tokens": 1096731,
+    "bytes": 3611788
+   },
+   "square/okhttp": {
+    "files": 56,
+    "tokens": 47815,
+    "bytes": 115046
+   },
+   "square/javapoet": {
+    "files": 38,
+    "tokens": 124130,
+    "bytes": 384495
+   },
+   "mockito/mockito": {
+    "files": 945,
+    "tokens": 933025,
+    "bytes": 3296544
+   },
+   "FasterXML/jackson-core": {
+    "files": 444,
+    "tokens": 1124914,
+    "bytes": 3715568
+   },
+   "FasterXML/jackson-databind": {
+    "files": 1409,
+    "tokens": 3330865,
+    "bytes": 11899776
+   },
+   "ReactiveX/RxJava": {
+    "files": 2100,
+    "tokens": 3088523,
+    "bytes": 11740552
+   },
+   "JodaOrg/joda-time": {
+    "files": 329,
+    "tokens": 1618277,
+    "bytes": 5544852
+   },
+   "TheAlgorithms/Java": {
+    "files": 1636,
+    "tokens": 1739318,
+    "bytes": 5158851
+   },
+   "qos-ch/slf4j": {
+    "files": 249,
+    "tokens": 269468,
+    "bytes": 808794
+   }
+  },
+  "val": {
+   "apache/commons-codec": {
+    "files": 179,
+    "tokens": 800270,
+    "bytes": 2210862
+   }
+  },
+  "test": {
+   "jhy/jsoup": {
+    "files": 199,
+    "tokens": 756339,
+    "bytes": 2276717
+   },
+   "google/gson": {
+    "files": 256,
+    "tokens": 612055,
+    "bytes": 1930870
+   },
+   "square/retrofit": {
+    "files": 254,
+    "tokens": 309345,
+    "bytes": 963053
+   }
+  }
+ },
+ "vocab_sweep": {
+  "1024": {
+   "val_bytes_per_token": 2.3738,
+   "test_bytes_per_token": 2.6006,
+   "embedding_params_d128": 131072
+  },
+  "2048": {
+   "val_bytes_per_token": 2.7639,
+   "test_bytes_per_token": 3.0845,
+   "embedding_params_d128": 262144
+  },
+  "4096": {
+   "val_bytes_per_token": 3.0751,
+   "test_bytes_per_token": 3.4847,
+   "embedding_params_d128": 524288
+  }
+ },
+ "note": "Tokenizer trained on the train split only. Splits are by repository (see data/SOURCES.md)."
+}
