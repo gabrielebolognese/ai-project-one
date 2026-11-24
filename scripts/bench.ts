@@ -61,6 +61,9 @@ async function backgroundLoad(ms = 2000): Promise<number> {
   return total > 0 ? +(100 * (1 - (b.idle - a.idle) / total)).toFixed(1) : 0;
 }
 const CONTENDED_LOAD = 15;
+// Caveat measured on the owner's laptop: a busy reading does not always mean lost throughput.
+// Background jobs that spin-wait (e.g. OpenMP pools) show as 100% load yet yield to us; the
+// kernel GFLOPS printed below are the real health signal (WASM ~9 GFLOPS/thread when free).
 
 // ------------------------------------------------------------------ 1. kernels
 
@@ -103,7 +106,7 @@ const shapes: { name: string; M: number; N: number; K: number }[] = [
 
 const loadBefore = await backgroundLoad();
 log(`[bench] CPU: ${cpus()[0]?.model ?? "?"} x${cpus().length} logical, node ${process.version}, WASM SIMD: ${wasmGemmAvailable()}`);
-log(`[bench] background CPU load before: ${loadBefore}%${loadBefore > CONTENDED_LOAD ? "  (CONTENDED: other jobs are running; throughput will be under-reported)" : ""}`);
+log(`[bench] background CPU load before: ${loadBefore}%${loadBefore > CONTENDED_LOAD ? "  (busy: other jobs are running; if the kernel GFLOPS below are far under ~9 for WASM, throughput is under-reported)" : ""}`);
 log(`[bench] 1/3 GEMM kernels, single thread, base shapes (B=${BATCH}, T=${T}, d=${d}, V=${VOCAB})`);
 const kSec = QUICK ? 0.3 : 1.0;
 const kernelRows = shapes.map((s) => {
@@ -222,7 +225,10 @@ const out = {
   presets: PRESETS,
   candidates,
   scaling,
-  recommendedWorkers: bestScaling.workers,
+  // Default stays at the physical-core count so the laptop remains usable during training;
+  // the SMT gain from 16 workers is recorded and available via --workers.
+  recommendedWorkers: WORKERS,
+  bestMeasuredWorkers: { workers: bestScaling.workers, tok_s: bestScaling.tok_s },
   choice: { preset: chosen.preset, params: chosen.params, cfg: chosen.cfg, tok_s: chosen.tok_s, tokens_in_budget: chosen.tokens_in_budget, tokens_per_param: chosen.tokens_per_param, workers: WORKERS, reason },
 };
 mkdirSync("results", { recursive: true });

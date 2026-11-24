@@ -51,7 +51,7 @@ about **1.5–4 GFLOPS per thread** with a cache-blocked, transposed-B inner loo
 **10–25 GFLOPS on 8 workers**. Training cost ≈ 6·N·T FLOPs (plus about 20 % attention at ctx 128).
 At a sustained 10 GFLOPS for 2.5 h (9·10¹³ FLOP), a 1.0M-param model sees about **12–15M
 tokens**, roughly 12 tokens/param. That is close enough to compute-optimal (Chinchilla, 2203.15556)
-for a tiny model. The exact size is chosen from `scripts/bench-matmul.ts` (§5.4), not guessed.
+for a tiny model. The exact size is chosen from `scripts/bench.ts` (§5.4), not guessed.
 
 ## 3. Package layout
 
@@ -65,7 +65,7 @@ java-autocomplete-lab/
   src/eval/       held-out metrics, n-gram baseline, latency bench -> results/
   src/server/     Node HTTP + WebSocket inference server, activation tracing protocol
   web/            Vite + TypeScript lab (CodeMirror 6, canvas/WebGL renderer, tween engine)
-  scripts/        fetch-corpus.ts, build-corpus.ts, train-tokenizer.ts, bench-matmul.ts,
+  scripts/        fetch-corpus.ts, build-corpus.ts, train-tokenizer.ts, bench.ts,
                   train.ts, evaluate.ts, build-report.ts
   models/         release/ (committed if < 20 MB): model.bin, config.json, tokenizer.json, log.jsonl
   results/        results.json, results.md, ablations.json, bench.json, report.html
@@ -152,7 +152,7 @@ java-autocomplete-lab/
 - **Ablations** (short 20-min budgets each, ≤ 1 h total): no curriculum; vocab 1024 vs 2048;
   2 vs 4 layers at equal time. Results go in `results/ablations.json`, even negative ones.
 
-### 5.4 Benchmark first (`scripts/bench-matmul.ts`)
+### 5.4 Benchmark first (`scripts/bench.ts`)
 Measure GFLOPS of our kernel at the real shapes `(B·T × d) @ (d × 4d)`, `(B·T × d) @ (d × V)`
 and attention `(T × 32) @ (32 × T)`, with 1/2/4/8/16 workers, plus end-to-end tokens/s for 3
 candidate configs (0.5M / 1M / 2M). Pick the largest config that sees ≥ 10 tokens/param

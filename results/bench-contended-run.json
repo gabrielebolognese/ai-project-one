@@ -1,0 +1,240 @@
+{
+  "date": "2026-11-24T17:26:45.923Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 5700U with Radeon Graphics         ",
+    "logicalCores": 16,
+    "totalMemGB": 15.3,
+    "node": "v22.16.0",
+    "v8": "12.4.254.21-node.26"
+  },
+  "quick": false,
+  "settings": {
+    "vocab": 2048,
+    "batchPerWorker": 8,
+    "workers": 8,
+    "ctx": 128,
+    "budgetMin": 150,
+    "stepTimeFraction": 0.97,
+    "minTokensPerParam": 10
+  },
+  "kernel": {
+    "singleThread": [
+      {
+        "name": "attn.qkv fwd  (BT x d) @ (d x 3d)",
+        "M": 1024,
+        "N": 384,
+        "K": 128,
+        "js_gflops": 0.4,
+        "wasm_gflops": 2.72,
+        "speedup": 6.76
+      },
+      {
+        "name": "mlp.fc fwd    (BT x d) @ (d x 4d)",
+        "M": 1024,
+        "N": 512,
+        "K": 128,
+        "js_gflops": 0.58,
+        "wasm_gflops": 3.21,
+        "speedup": 5.53
+      },
+      {
+        "name": "mlp.proj fwd  (BT x 4d) @ (4d x d)",
+        "M": 1024,
+        "N": 128,
+        "K": 512,
+        "js_gflops": 0.49,
+        "wasm_gflops": 1.95,
+        "speedup": 3.98
+      },
+      {
+        "name": "head fwd      (BT x d) @ (d x V)",
+        "M": 1024,
+        "N": 2048,
+        "K": 128,
+        "js_gflops": 0.5,
+        "wasm_gflops": 2.58,
+        "speedup": 5.17
+      },
+      {
+        "name": "mlp.fc dW     (4d x BT) @ (BT x d)",
+        "M": 512,
+        "N": 128,
+        "K": 1024,
+        "js_gflops": 0.5,
+        "wasm_gflops": 2.4,
+        "speedup": 4.82
+      },
+      {
+        "name": "attn scores   (T x hd) @ (hd x T)",
+        "M": 128,
+        "N": 128,
+        "K": 32,
+        "js_gflops": 0.36,
+        "wasm_gflops": 2.08,
+        "speedup": 5.71
+      },
+      {
+        "name": "attn values   (T x T) @ (T x hd)",
+        "M": 128,
+        "N": 32,
+        "K": 128,
+        "js_gflops": 0.26,
+        "wasm_gflops": 2.81,
+        "speedup": 10.62
+      }
+    ],
+    "naiveIkjGflops": 0.09,
+    "meanWasmSpeedup": 6.08,
+    "wasmAdopted": true
+  },
+  "presets": {
+    "small": {
+      "ctx": 128,
+      "dModel": 96,
+      "nLayers": 3,
+      "nHeads": 3,
+      "dMlp": 384
+    },
+    "base": {
+      "ctx": 128,
+      "dModel": 128,
+      "nLayers": 4,
+      "nHeads": 4,
+      "dMlp": 512
+    },
+    "large": {
+      "ctx": 128,
+      "dModel": 160,
+      "nLayers": 6,
+      "nHeads": 5,
+      "dMlp": 640
+    }
+  },
+  "candidates": [
+    {
+      "preset": "small",
+      "cfg": {
+        "vocabSize": 2048,
+        "ctx": 128,
+        "dModel": 96,
+        "nLayers": 3,
+        "nHeads": 3,
+        "dMlp": 384
+      },
+      "params": 544608,
+      "flopsPerToken": 3391488,
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 4,
+      "tok_s": 1233.9,
+      "step_ms": 6639.2,
+      "sustained_gflops": 4.18,
+      "tokens_in_budget": 10771947,
+      "tokens_per_param": 19.8
+    },
+    {
+      "preset": "base",
+      "cfg": {
+        "vocabSize": 2048,
+        "ctx": 128,
+        "dModel": 128,
+        "nLayers": 4,
+        "nHeads": 4,
+        "dMlp": 512
+      },
+      "params": 1071872,
+      "flopsPerToken": 6684672,
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 768.2,
+      "step_ms": 10663.8,
+      "sustained_gflops": 5.14,
+      "tokens_in_budget": 6706386,
+      "tokens_per_param": 6.3
+    },
+    {
+      "preset": "large",
+      "cfg": {
+        "vocabSize": 2048,
+        "ctx": 128,
+        "dModel": 160,
+        "nLayers": 6,
+        "nHeads": 5,
+        "dMlp": 640
+      },
+      "params": 2204160,
+      "flopsPerToken": 13762560,
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 459.9,
+      "step_ms": 17811.9,
+      "sustained_gflops": 6.33,
+      "tokens_in_budget": 4014927,
+      "tokens_per_param": 1.8
+    }
+  ],
+  "scaling": [
+    {
+      "workers": 1,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 166.7,
+      "step_ms": 6142.1,
+      "sustained_gflops": 1.11
+    },
+    {
+      "workers": 2,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 254.6,
+      "step_ms": 8044.6,
+      "sustained_gflops": 1.7
+    },
+    {
+      "workers": 4,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 515.2,
+      "step_ms": 7950.2,
+      "sustained_gflops": 3.44
+    },
+    {
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 1030.5,
+      "step_ms": 7949.2,
+      "sustained_gflops": 6.89
+    },
+    {
+      "workers": 16,
+      "batchPerWorker": 8,
+      "steps": 3,
+      "tok_s": 1806,
+      "step_ms": 9072.1,
+      "sustained_gflops": 12.07
+    }
+  ],
+  "choice": {
+    "preset": "small",
+    "params": 544608,
+    "cfg": {
+      "vocabSize": 2048,
+      "ctx": 128,
+      "dModel": 96,
+      "nLayers": 3,
+      "nHeads": 3,
+      "dMlp": 384
+    },
+    "tok_s": 1233.9,
+    "tokens_in_budget": 10771947,
+    "tokens_per_param": 19.8,
+    "workers": 8,
+    "reason": "largest candidate with >= 10 tokens/param in 150 min: small sees 10.8M tokens (19.8 tokens/param) at 1233.9 tok/s with 8 workers"
+  },
+  "notes": [
+    "Genuinely contended run (other jobs: local Whisper transcription + video pipelines). Kept as evidence of how much throughput drops when the laptop is busy; not used for the size decision. Recorded by an earlier bench.ts revision without the backgroundLoad field."
+  ]
+}

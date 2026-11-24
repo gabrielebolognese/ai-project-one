@@ -29,7 +29,7 @@ and the measurement is recorded here when it exists.
 ## Model
 | # | Decision | Reason |
 |---|---|---|
-| D12 | Decoder-only pre-LN transformer, d=128, 4 layers, 4 heads, MLP 512, ctx 128 (≈1.07M params) *(provisional; final size from `bench-matmul`)* | Budget arithmetic (SPEC §2): about 10 GFLOPS × 2.5 h ≈ 9·10¹³ FLOP ≈ 12–15M tokens for 1M params, about 12 tokens/param (Chinchilla-ish). TinyStories shows this scale is fluent in narrow domains |
+| D12 | Decoder-only pre-LN transformer, d=128, 4 layers, 4 heads, MLP 512, ctx 128 (1,071,872 params, preset `base`) **(confirmed by measurement, see D38)** | `npm run bench`: with 8 workers `base` trains at 2,660 tok/s, about 23.2M tokens in 150 min, or 21.7 tokens/param (Chinchilla-optimal is about 20). `large` (2.2M) reaches only 5.3 tokens/param; `small` (0.54M) reaches 71 |
 | D13 | GELU MLP, not SwiGLU | One scalar per neuron gives honest "neurons lighting up" visuals, and the MLP is 33 % cheaper |
 | D14 | Learned absolute positions, not RoPE | Never extrapolated beyond ctx; the position embedding is itself a nice visual tensor |
 | D15 | Tied input/output embeddings | Saves 262k params (25 %) at no quality cost at this size (1608.05859) |
@@ -40,15 +40,15 @@ and the measurement is recorded here when it exists.
 | # | Decision | Reason |
 |---|---|---|
 | D18 | Tape-based reverse-mode autograd over Float32Array, with fused kernels for attention, LayerNorm and cross-entropy | Fused ops avoid allocating T×T intermediates per op and are much faster in JS than generic elementwise graphs |
-| D19 | Cache-blocked, register-tiled matmul; a WASM SIMD kernel only if > 1.5× faster *(measured)* | V8 doesn't vectorise JS loops. Hand-written WASM SIMD is still "from scratch", but we only add the complexity if it pays |
-| D20 | Data-parallel `worker_threads` with SharedArrayBuffer weights/grads (W=8 default) | At about 1M params a full grad all-reduce is about 4 MB per step, which is cheap in shared memory. Data-parallel has far less sync than matmul-parallel at these small shapes. Matmul-parallel is the fallback |
+| D19 | Cache-blocked, register-tiled matmul **plus a WASM SIMD kernel, adopted: measured 6.1x faster** | Single thread at the real layer shapes: JS 4x4-tile kernel 1.3-1.6 GFLOPS, naive i-k-j JS 0.38, WASM SIMD (f32x4, 2x4 register tile, B-panel blocking) 7.2-9.6 GFLOPS. The module is assembled byte by byte in `src/engine/wasm-gemm.ts`: no compiler, no wabt, no framework. JS stays as a tested fallback (`JAL_KERNEL=js`) |
+| D20 | Data-parallel `worker_threads` with SharedArrayBuffer weights and per-worker gradient slabs, **W=8 default** | Measured scaling for `base`: 1 worker 679 tok/s, 2 → 1,270, 4 → 2,226, 8 → 3,742, 16 (SMT) → 4,446. 16 is +19% but saturates the laptop, so 8 stays the default and `--workers 16` is opt-in. The all-reduce (mean of W slabs) plus AdamW and EMA run on the main thread while workers idle, so no locks are needed |
 | D21 | Finite-difference grad checks for every op | A hand-written engine is only credible if it is tested; bugs here would make silently wrong models |
 
 ## Training
 | # | Decision | Reason |
 |---|---|---|
 | D22 | `rho = elapsed/budget` drives LR and curricula; warmup 200, then cosine in rho to 10 % | Copied from TinyMind `train.py` (`lr_at`): any budget ends annealed. Cramming does the same |
-| D23 | Context curriculum 64→128 at rho 0.3; file curriculum (short and simple files first until rho 0.2) | The cheap-early-steps idea of CGAR (used by TinyMind) carried over to LMs; easy files are the "clean textbook" signal (phi-1) without an LLM |
+| D23 | Context curriculum 64→128 at rho 0.3; file curriculum (short and simple files first until rho 0.2) | The cheap-early-steps idea of CGAR (used by TinyMind) carried over to LMs; easy files are the "clean textbook" signal (phi-1) without an LLM (the context curriculum is implemented in `src/train/schedule.ts`; the file curriculum needs per-file metadata from the corpus step and is not implemented yet) |
 | D24 | AdamW (0.9, 0.95), wd 0.1 on matrices, clip 1.0, peak LR ≈ 3e-3 *(provisional; 5-min sweep incl. WSD)* | Standard small-LM recipe; MiniCPM shows high LR + WSD can beat cosine at small scale, so it is tested |
 | D25 | EMA 0.999 for eval/release; `best.bin` on val loss; eval every 10 min | TinyMind's EMA + best-checkpoint practice gives a smoother, better final model |
 | D26 | Release budget 150 min; ablations 20 min each, ≤ 1 h total | Within the owner's 2–3 h "mid PC" budget; ablations mirror TinyMind's stability ablation |
@@ -75,3 +75,13 @@ and the measurement is recorded here when it exists.
 |---|---|---|
 | D36 | `src/{engine,model,tokenizer,train,eval,server}`, `web/`, `scripts/`, `models/`, `results/`, `data/` (gitignored), `docs/` | Each step of the plan owns one folder; the engine is reusable by both trainer and server |
 | D37 | Run TS with `tsx` in dev, `tsc` for type checking, ESM, strict | No build step needed for scripts; strict types catch shape bugs early |
+
+## Measured (engine step, 2026-11-24)
+| # | Decision | Reason |
+|---|---|---|
+| D38 | Release size rule: the **largest of three candidates that sees >= 10 tokens/param in 150 min**. Result: `base` | `results/bench.json`: small 4,445 tok/s (71 tok/param), base 2,660 tok/s (21.7), large 1,335 tok/s (5.3), all at 8 workers x 8 seqs x 128 tokens. The decision uses the slower candidate-pass number; the scaling pass measured base at 3,742 tok/s a minute later (15 W laptop power/thermal variance) |
+| D39 | The benchmark records background CPU load, and the training step **re-runs `npm run bench` right before the release run**; `train.ts` reads `choice.preset` and `recommendedWorkers` from `results/bench.json` | The owner's laptop runs other jobs. A genuinely contended run (video renders + local transcription) measured base at 768 tok/s (3.5x lower, `results/bench-contended-run.json`), where the same rule would pick `small`. A 100% load reading alone is not proof of contention: spin-waiting pools read as busy but yield, and kernel GFLOPS (~9 for WASM) are the real health signal |
+| D40 | Attention runs per (sequence, head) as GEMMs on the full T x T score square, with the causal mask applied in the softmax | Twice the arithmetic of a triangular loop, but on the ~6x faster SIMD kernel. Mask tests and grad checks pass on both the JS and WASM paths |
+| D41 | Token shards are raw little-endian uint16 (`data/train.bin`, `data/val.bin`), with optional `data/meta.json {vocabSize}` | Zero-copy into a SharedArrayBuffer shared by every worker; vocab <= 65,535. The tokenizer step writes this format |
+| D42 | Checkpoints: `models/<run>/weights.bin` (best EMA weights on val loss), `last.bin` (raw final weights), `config.json` (model + train options + a `tensors` table of name/shape/offset/numel), `log.jsonl`, `summary.json` | The web lab lists every tensor from the table and reads it zero-copy |
+| D43 | Hardware lesson | Plain JS on V8 tops out at ~1.5 GFLOPS/thread (no auto-vectorisation). Hand-assembled WASM SIMD reaches ~9. End to end, the non-GEMM work (exp in softmax/cross-entropy, GELU, LayerNorm, gathers, GC) is about half of a single-thread step, and 8 workers sustain ~18-25 GFLOPS: the 15 W 5700U is power-limited well before 8x linear scaling |

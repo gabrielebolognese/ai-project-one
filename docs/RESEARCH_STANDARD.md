@@ -47,7 +47,7 @@ structure), `tinymind/train.py`, `tinymind/bench_gemm.py`, `tinymind/build_repor
 | TinyMind practice | Java Autocomplete Lab equivalent |
 |---|---|
 | HF Papers survey with hardware fit | `docs/survey.md`, same method and verdict column |
-| `bench_gemm.py` at layer shapes | `scripts/bench-matmul.ts`: our own TS matmul at real shapes, 1/2/4/8 workers → sets model size |
+| `bench_gemm.py` at layer shapes | `scripts/bench.ts`: our own TS matmul at real shapes, 1/2/4/8 workers → sets model size |
 | `rho`-driven LR + curricula | `src/train/schedule.ts`: rho drives warmup/cosine-to-10 % LR, context-length curriculum and file-length curriculum |
 | EMA, best.pt, log.jsonl, config.json | Same: `models/<run>/{best.bin, last.bin, config.json, log.jsonl}` |
 | Held-out buckets + ms/puzzle | Held-out *repositories*, top-1/top-5, line exact-match, ms/completion, n-gram baseline |

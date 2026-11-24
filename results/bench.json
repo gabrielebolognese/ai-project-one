@@ -1,0 +1,253 @@
+{
+  "date": "2026-11-24T17:43:12.700Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 5700U with Radeon Graphics         ",
+    "logicalCores": 16,
+    "totalMemGB": 15.3,
+    "node": "v22.16.0",
+    "v8": "12.4.254.21-node.26"
+  },
+  "quick": false,
+  "backgroundLoad": {
+    "beforePct": 100,
+    "afterPct": 76.5,
+    "contended": true,
+    "thresholdPct": 15
+  },
+  "settings": {
+    "vocab": 2048,
+    "batchPerWorker": 8,
+    "workers": 8,
+    "ctx": 128,
+    "budgetMin": 150,
+    "stepTimeFraction": 0.97,
+    "minTokensPerParam": 10
+  },
+  "kernel": {
+    "singleThread": [
+      {
+        "name": "attn.qkv fwd  (BT x d) @ (d x 3d)",
+        "M": 1024,
+        "N": 384,
+        "K": 128,
+        "js_gflops": 1.61,
+        "wasm_gflops": 8.43,
+        "speedup": 5.25
+      },
+      {
+        "name": "mlp.fc fwd    (BT x d) @ (d x 4d)",
+        "M": 1024,
+        "N": 512,
+        "K": 128,
+        "js_gflops": 1.43,
+        "wasm_gflops": 8.99,
+        "speedup": 6.29
+      },
+      {
+        "name": "mlp.proj fwd  (BT x 4d) @ (4d x d)",
+        "M": 1024,
+        "N": 128,
+        "K": 512,
+        "js_gflops": 1.52,
+        "wasm_gflops": 9.35,
+        "speedup": 6.15
+      },
+      {
+        "name": "head fwd      (BT x d) @ (d x V)",
+        "M": 1024,
+        "N": 2048,
+        "K": 128,
+        "js_gflops": 1.32,
+        "wasm_gflops": 9.24,
+        "speedup": 6.99
+      },
+      {
+        "name": "mlp.fc dW     (4d x BT) @ (BT x d)",
+        "M": 512,
+        "N": 128,
+        "K": 1024,
+        "js_gflops": 1.45,
+        "wasm_gflops": 9.57,
+        "speedup": 6.59
+      },
+      {
+        "name": "attn scores   (T x hd) @ (hd x T)",
+        "M": 128,
+        "N": 128,
+        "K": 32,
+        "js_gflops": 1.45,
+        "wasm_gflops": 7.19,
+        "speedup": 4.95
+      },
+      {
+        "name": "attn values   (T x T) @ (T x hd)",
+        "M": 128,
+        "N": 32,
+        "K": 128,
+        "js_gflops": 1.35,
+        "wasm_gflops": 8.88,
+        "speedup": 6.56
+      }
+    ],
+    "naiveIkjGflops": 0.38,
+    "meanWasmSpeedup": 6.11,
+    "wasmAdopted": true
+  },
+  "presets": {
+    "small": {
+      "ctx": 128,
+      "dModel": 96,
+      "nLayers": 3,
+      "nHeads": 3,
+      "dMlp": 384
+    },
+    "base": {
+      "ctx": 128,
+      "dModel": 128,
+      "nLayers": 4,
+      "nHeads": 4,
+      "dMlp": 512
+    },
+    "large": {
+      "ctx": 128,
+      "dModel": 160,
+      "nLayers": 6,
+      "nHeads": 5,
+      "dMlp": 640
+    }
+  },
+  "candidates": [
+    {
+      "preset": "small",
+      "cfg": {
+        "vocabSize": 2048,
+        "ctx": 128,
+        "dModel": 96,
+        "nLayers": 3,
+        "nHeads": 3,
+        "dMlp": 384
+      },
+      "params": 544608,
+      "flopsPerToken": 3391488,
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 11,
+      "tok_s": 4444.9,
+      "step_ms": 1843,
+      "sustained_gflops": 15.07,
+      "tokens_in_budget": 38803977,
+      "tokens_per_param": 71.3
+    },
+    {
+      "preset": "base",
+      "cfg": {
+        "vocabSize": 2048,
+        "ctx": 128,
+        "dModel": 128,
+        "nLayers": 4,
+        "nHeads": 4,
+        "dMlp": 512
+      },
+      "params": 1071872,
+      "flopsPerToken": 6684672,
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 7,
+      "tok_s": 2660.4,
+      "step_ms": 3079.2,
+      "sustained_gflops": 17.78,
+      "tokens_in_budget": 23225292,
+      "tokens_per_param": 21.7
+    },
+    {
+      "preset": "large",
+      "cfg": {
+        "vocabSize": 2048,
+        "ctx": 128,
+        "dModel": 160,
+        "nLayers": 6,
+        "nHeads": 5,
+        "dMlp": 640
+      },
+      "params": 2204160,
+      "flopsPerToken": 13762560,
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 4,
+      "tok_s": 1335.3,
+      "step_ms": 6134.8,
+      "sustained_gflops": 18.38,
+      "tokens_in_budget": 11657169,
+      "tokens_per_param": 5.3
+    }
+  ],
+  "scaling": [
+    {
+      "workers": 1,
+      "batchPerWorker": 8,
+      "steps": 8,
+      "tok_s": 679.1,
+      "step_ms": 1507.9,
+      "sustained_gflops": 4.54
+    },
+    {
+      "workers": 2,
+      "batchPerWorker": 8,
+      "steps": 8,
+      "tok_s": 1269.8,
+      "step_ms": 1612.8,
+      "sustained_gflops": 8.49
+    },
+    {
+      "workers": 4,
+      "batchPerWorker": 8,
+      "steps": 7,
+      "tok_s": 2225.8,
+      "step_ms": 1840.2,
+      "sustained_gflops": 14.88
+    },
+    {
+      "workers": 8,
+      "batchPerWorker": 8,
+      "steps": 6,
+      "tok_s": 3742.4,
+      "step_ms": 2188.9,
+      "sustained_gflops": 25.02
+    },
+    {
+      "workers": 16,
+      "batchPerWorker": 8,
+      "steps": 4,
+      "tok_s": 4445.6,
+      "step_ms": 3685.4,
+      "sustained_gflops": 29.72
+    }
+  ],
+  "recommendedWorkers": 8,
+  "choice": {
+    "preset": "base",
+    "params": 1071872,
+    "cfg": {
+      "vocabSize": 2048,
+      "ctx": 128,
+      "dModel": 128,
+      "nLayers": 4,
+      "nHeads": 4,
+      "dMlp": 512
+    },
+    "tok_s": 2660.4,
+    "tokens_in_budget": 23225292,
+    "tokens_per_param": 21.7,
+    "workers": 8,
+    "reason": "largest candidate with >= 10 tokens/param in 150 min: base sees 23.2M tokens (21.7 tokens/param) at 2660.4 tok/s with 8 workers"
+  },
+  "bestMeasuredWorkers": {
+    "workers": 16,
+    "tok_s": 4445.6
+  },
+  "notes": [
+    "Derived fields recommendedWorkers/bestMeasuredWorkers were rewritten after the run (no new measurement): default kept at 8 workers (physical cores) so the laptop stays usable; 16 SMT workers measured +19% over 8 in the scaling pass.",
+    "backgroundLoad reads ~100% because another job's spin-waiting worker pool was running; the kernel GFLOPS (WASM ~9/thread) match isolated microbenchmarks, so this run reflects the machine's real capacity. A genuinely contended run (video renders + transcription) measured 3.5x lower and is kept in results/bench-contended-run.json.",
+    "Run-to-run variance: base at 8 workers measured 2660 tok/s in the candidate pass and 3742 tok/s in the scaling pass a minute later (thermal/power limits of a 15 W laptop CPU); the decision uses the lower candidate-pass number."
+  ]
+}
