@@ -14,11 +14,17 @@
     "train": "tsx scripts/train.ts",
     "bench": "tsx scripts/bench.ts",
     "corpus": "tsx scripts/fetch-corpus.ts",
-    "tokenizer": "tsx scripts/train-tokenizer.ts"
+    "tokenizer": "tsx scripts/train-tokenizer.ts",
+    "start": "tsx src/server/main.ts",
+    "smoke": "tsx scripts/smoke.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
+    "@types/ws": "^8.18.2",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ws": "^8.23.0"
   }
 }
