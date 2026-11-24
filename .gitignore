@@ -1,0 +1,9 @@
+node_modules/
+dist/
+web/dist/
+data/*
+!data/SOURCES.md
+models/*
+!models/release/
+*.log
+.DS_Store

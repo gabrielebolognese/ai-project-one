@@ -1,0 +1,13 @@
+{
+  "name": "java-autocomplete-lab",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A tiny Java code-completion transformer trained from scratch on a laptop CPU in pure TypeScript, with a 3Blue1Brown-style web lab.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {}
+}
