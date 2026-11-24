@@ -1,15 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, copyFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { noGrad } from "../engine/index.js";
 import { Transformer, makeConfig, saveModel } from "../model/index.js";
 import { IncrementalDecoder } from "./decoder.js";
 import { fitPca, project } from "./pca.js";
-import { downsample } from "./http.js";
+import { downsample, startServer } from "./http.js";
 import { ModelHost } from "./model-host.js";
-import { generate } from "./inference.js";
+import { buildPrompt, generate, tracePrompt } from "./inference.js";
 
 function smallModel(seed = 7): Transformer {
   const m = new Transformer(makeConfig("small", 300, { ctx: 24 }));
@@ -92,6 +92,60 @@ test("ModelHost loads the newest run, prefers release, falls back to random init
     saveModel(join(root, "models", "release"), m);
     assert.equal(new ModelHost(quiet).source.kind, "release");
   } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("trace carries every last-token MLP activation and per-token top neurons", () => {
+  const root = mkdtempSync(join(tmpdir(), "jal-trace-"));
+  try {
+    mkdirSync(join(root, "models"), { recursive: true });
+    copyFileSync(join(process.cwd(), "models", "tokenizer.json"), join(root, "models", "tokenizer.json"));
+    const host = new ModelHost({ root, log: () => {} });
+    const ids = buildPrompt(host, "public class A { int x = 1; }").ids;
+    const tr = tracePrompt(host, ids, { attnWindow: 8, mlpWindowTopK: 4 });
+    const { nLayers: L, dMlp: m } = host.model.cfg;
+    assert.equal(tr.mlp.lastAll!.length, L);
+    assert.equal(tr.mlp.lastAll![0].length, m);
+    assert.equal(tr.mlp.windowTop.length, L);
+    assert.equal(tr.mlp.windowTop[0].length, tr.attention.window);
+    // the window top list of the last token agrees with the full vector and is sorted
+    const top = tr.mlp.windowTop[1][tr.attention.window - 1];
+    assert.equal(top.length, 4);
+    const best = Math.max(...tr.mlp.lastAll![1]);
+    assert.ok(Math.abs(top[0].v - best) < 1e-3);
+    for (let i = 1; i < top.length; i++) assert.ok(top[i - 1].v >= top[i].v);
+    assert.equal(tracePrompt(host, ids, { mlpLastAll: false }).mlp.lastAll, undefined);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("HTTP: /api/vocab, /api/notebook and a cancelled /api/complete", async () => {
+  const root = mkdtempSync(join(tmpdir(), "jal-http-"));
+  mkdirSync(join(root, "models", "runX"), { recursive: true });
+  copyFileSync(join(process.cwd(), "models", "tokenizer.json"), join(root, "models", "tokenizer.json"));
+  writeFileSync(join(root, "models", "runX", "log.jsonl"), '{"step":1,"loss":7.5,"tokens":10}\n{"step":2,"loss":7.1,"tokens":20,"val_loss":7.2}\n{"step":3,');
+  const srv = await startServer({ root, port: 0, quiet: true, webDir: "nope" });
+  try {
+    const vocab = (await (await fetch(`${srv.url}/api/vocab`)).json()) as { vocab: string[] };
+    assert.equal(vocab.vocab.length, srv.host.tokenizer.vocabSize);
+    assert.equal(vocab.vocab[0], "<|bof|>");
+    const nb = (await (await fetch(`${srv.url}/api/notebook`)).json()) as { runs: { name: string; log: unknown[] }[]; results: unknown };
+    assert.equal(nb.runs[0].name, "runX");
+    assert.equal(nb.runs[0].log.length, 2, "partial last line is skipped");
+    assert.equal(nb.results, null, "no results.json -> null, never invented");
+    // abort a long completion: the server must stop and stay responsive
+    const ctrl = new AbortController();
+    const p = fetch(`${srv.url}/api/complete`, {
+      method: "POST", body: JSON.stringify({ code: "public class A {", maxTokens: 128, stopAtNewline: false }), signal: ctrl.signal,
+    }).catch((e: Error) => e.name);
+    setTimeout(() => ctrl.abort(), 5);
+    assert.equal(await p, "AbortError");
+    const ok = await fetch(`${srv.url}/api/health`);
+    assert.equal(ok.status, 200);
+  } finally {
+    await srv.close();
     rmSync(root, { recursive: true, force: true });
   }
 });

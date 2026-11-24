@@ -14,8 +14,10 @@ Static files are served from `web/dist`, then `web/`, then a placeholder page.
 | `GET /api/model` | `config`, `numParams`, `kernel`, `tokenizer` info, `pca.explained`, `warnings`, and `tensors[]`. Each tensor has `name`, `shape`, `offset`, `numel`, `mean`, `std`, `min`, `max`, `absMean`, `nearZero` and a 32-bin `hist` |
 | `GET /api/weights/:name?format=json&maxRows=128&maxCols=128&mode=mean\|absmax` | A heatmap block-pooled to at most `maxRows x maxCols`: `{rows, cols, pool, min, max, data[]}` plus the tensor's stats |
 | `GET /api/weights/:name?format=bin` | Raw little-endian Float32, with the shape in the `X-Shape` header |
+| `GET /api/vocab` | `{vocab: string[]}`: the decoded text of every token id (weights view hover, vocabulary PCA) |
+| `GET /api/notebook` | Every `models/<run>/` with `config`, `summary` and the parsed `log.jsonl`; `results/results.json` (null if not run), `results.md`, `bench.json`, `corpus-stats.json`, `web-perf.json`; `MODEL_CARD.md` next to the loaded checkpoint if present |
 | `POST /api/tokenize {code, cursor?}` | `{tokens[{id,text}], truncated, prefixChars}` |
-| `POST /api/complete {code, cursor?, maxTokens=16, topK=10, temperature=0, stopAtNewline=true, seed?}` | `{completion, stopReason, prompt, steps[{id,text,p,entropy,topk[]}], ms}` |
+| `POST /api/complete {code, cursor?, maxTokens=16, topK=10, temperature=0, stopAtNewline=true, seed?}` | `{completion, stopReason, prompt, steps[{id,text,p,entropy,topk[]}], ms}`  If the client disconnects (the lab aborts stale requests), generation stops at the next token |
 
 The prompt is `<|bof|>` followed by the encoded text before `cursor`. If it is longer than the context, the server keeps the last `ctx` tokens and reports `truncated`.
 
@@ -32,9 +34,10 @@ The server replies in this order:
    - `lastVectors[S][d]`: the full residual vectors of the last token.
    - `attention.last[L][H][T]`: the last query's attention over all keys. `attention.matrices[L][H][W*W]`: the full matrices for the last `W` tokens, starting at token `windowStart`.
    - `mlp.lastTop[L][{i,v}]`, `mlp.argmax[L][T]`, `mlp.argmaxV[L][T]`, `mlp.activeFrac[L]`.
+   - `mlp.lastAll[L][dMlp]`: every GELU activation of the last token (`mlpLastAll: false` omits it); `mlp.windowTop[L][W][{i,v}]`: the top `mlpWindowTopK` (default 8) neurons of each token in the attention window.
    - `logitLens[S]{topk, entropy}`: the last token's residual decoded through `ln_f` and the tied head.
    - `next{topk, entropy}`.
-4. `step`: one message per generated token, `{i, id, text, p, entropy, topk[], ms}`.
+4. `step`: one message per generated token (none when the request has `maxTokens: 0`, which the web lab uses), `{i, id, text, p, entropy, topk[], ms}`.
 5. `done` with `{completion, stopReason, traceMs, totalMs}`, or `cancelled`.
 
 ## Measured on the Ryzen 7 5700U (`npm run smoke`, random-init `base` model, other jobs loading the CPU)

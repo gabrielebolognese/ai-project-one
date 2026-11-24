@@ -203,6 +203,10 @@ export interface TraceOptions {
   mlpTopK?: number;
   /** Include full d-dim residual vectors for the last token (default true). */
   lastVectors?: boolean;
+  /** Include every MLP activation of the last token (default true; dMlp floats per layer). */
+  mlpLastAll?: boolean;
+  /** Top neurons per window token per layer (default 8, max 32). */
+  mlpWindowTopK?: number;
 }
 
 export interface TracePayload {
@@ -237,6 +241,10 @@ export interface TracePayload {
     argmaxV: number[][];
     /** [L]: fraction of the last token's neurons with activation > 0. */
     activeFrac: number[];
+    /** [L][dMlp]: every post-GELU activation of the last token (for the neuron grid). */
+    lastAll?: number[][];
+    /** [L][W][k]: top neurons of each token inside the attention window (token-by-token replay). */
+    windowTop: { i: number; v: number }[][][];
   };
   /** Logit lens [stage]: LN_f(residual of the last token) @ tok_emb^T, top 5 tokens per stage. */
   logitLens: { topk: TopK[]; entropy: number }[];
@@ -319,6 +327,9 @@ export function tracePrompt(host: ModelHost, ids: number[], opts: TraceOptions =
   const argmax: number[][] = [];
   const argmaxV: number[][] = [];
   const activeFrac: number[] = [];
+  const lastAll: number[][] = [];
+  const windowTop: { i: number; v: number }[][][] = [];
+  const wk = Math.max(1, Math.min(32, Math.floor(opts.mlpWindowTopK ?? 8)));
   for (const l of tr.layers) {
     const a = l.mlpAct; // [T, m]
     const row = a.subarray((T - 1) * m, T * m);
@@ -337,6 +348,22 @@ export function tracePrompt(host: ModelHost, ids: number[], opts: TraceOptions =
     }
     argmax.push(am);
     argmaxV.push(av);
+    if (opts.mlpLastAll !== false) lastAll.push(Array.from(row, r3));
+    const wt: { i: number; v: number }[][] = [];
+    for (let t = w0; t < T; t++) {
+      const r = a.subarray(t * m, (t + 1) * m);
+      const top: number[] = [];
+      for (let i = 0; i < m; i++) {
+        if (top.length < wk || r[i] > r[top[top.length - 1]]) {
+          let j = top.length < wk ? top.length : wk - 1;
+          if (top.length < wk) top.push(i);
+          while (j > 0 && r[top[j - 1]] < r[i]) { top[j] = top[j - 1]; j--; }
+          top[j] = i;
+        }
+      }
+      wt.push(top.map((i) => ({ i, v: r3(r[i]) })));
+    }
+    windowTop.push(wt);
   }
 
   const logitLens = stageMats.map((mat) => {
@@ -348,7 +375,7 @@ export function tracePrompt(host: ModelHost, ids: number[], opts: TraceOptions =
     T, dModel: d, nLayers: L, nHeads: H, dMlp: m, stages, pca, norms,
     ...(opts.lastVectors !== false ? { lastVectors } : {}),
     attention: { last: attLast, windowStart: w0, window: W, matrices: attMats },
-    mlp: { lastTop, argmax, argmaxV, activeFrac },
+    mlp: { lastTop, argmax, argmaxV, activeFrac, ...(opts.mlpLastAll !== false ? { lastAll } : {}), windowTop },
     logitLens,
     next: { topk: next.topk, entropy: next.entropy },
   };

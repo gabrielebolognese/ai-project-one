@@ -5,6 +5,8 @@
  *   GET  /api/model                  config, tokenizer info, tensor table with stats + histograms
  *   GET  /api/weights/:name          ?format=json (default, downsampled for heatmaps; &maxRows&maxCols&mode=mean|absmax)
  *                                    ?format=bin  (raw little-endian Float32, shape in X-Shape header)
+ *   GET  /api/vocab                  {vocab: string[]} decoded text of every token id
+ *   GET  /api/notebook               training logs (models/<run>/log.jsonl), results/*.json, model card
  *   POST /api/tokenize {code, cursor?}
  *   POST /api/complete {code, cursor?, maxTokens?, topK?, temperature?, stopAtNewline?}
  *   WS   /api/trace                  send {type:"trace", code, cursor?, maxTokens?, ...}; receives
@@ -20,7 +22,8 @@ import { extname, join, normalize, resolve, sep } from "node:path";
 import type { AddressInfo } from "node:net";
 import { WebSocketServer, type WebSocket } from "ws";
 import { ModelHost, type HostOptions } from "./model-host.js";
-import { buildPrompt, generate, tracePrompt, type GenerateOptions, type TraceOptions } from "./inference.js";
+import { buildPrompt, generate, tokenText, tracePrompt, type GenerateOptions, type TraceOptions } from "./inference.js";
+import { readNotebook } from "./notebook.js";
 
 export interface ServerOptions extends HostOptions {
   host?: string;
@@ -92,6 +95,8 @@ function traceOpts(b: Record<string, unknown>): TraceOptions {
   return {
     topK: num(b.topK), attnWindow: num(b.attnWindow), mlpTopK: num(b.mlpTopK),
     lastVectors: typeof b.lastVectors === "boolean" ? b.lastVectors : undefined,
+    mlpLastAll: typeof b.mlpLastAll === "boolean" ? b.mlpLastAll : undefined,
+    mlpWindowTopK: num(b.mlpWindowTopK),
   };
 }
 
@@ -138,6 +143,7 @@ export async function startServer(opts: ServerOptions = {}): Promise<RunningServ
   const webRoot = webCandidates.find((d) => existsSync(join(d, "index.html")));
   const modelInfoJson = JSON.stringify(host.modelInfo());
   const debounceDefault = opts.debounceMs ?? 60;
+  let vocabJson: string | null = null;
 
   async function handleApi(req: IncomingMessage, res: ServerResponse, url: URL): Promise<void> {
     const p = url.pathname;
@@ -171,6 +177,15 @@ export async function startServer(opts: ServerOptions = {}): Promise<RunningServ
       const ds = downsample(data, R, C, maxRows, maxCols, mode);
       return sendJson(res, 200, { name, shape: info.shape, mode, stats: host.statsByName.get(name), ...ds });
     }
+    if (p === "/api/vocab" && req.method === "GET") {
+      vocabJson ??= JSON.stringify({ vocab: Array.from({ length: host.tokenizer.vocabSize }, (_, i) => tokenText(host, i)) });
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      res.end(vocabJson);
+      return;
+    }
+    if (p === "/api/notebook" && req.method === "GET") {
+      return sendJson(res, 200, readNotebook(root, host));
+    }
     if (p === "/api/tokenize" && req.method === "POST") {
       const b = asCodeRequest(await readBody(req));
       const pr = buildPrompt(host, b.code, b.cursor);
@@ -180,7 +195,11 @@ export async function startServer(opts: ServerOptions = {}): Promise<RunningServ
       const b = asCodeRequest(await readBody(req));
       const t0 = performance.now();
       const pr = buildPrompt(host, b.code, b.cursor);
-      const g = await generate(host, pr.ids, genOpts(b));
+      // Stop generating as soon as the client gives up (the lab aborts stale requests on keystrokes).
+      let gone = false;
+      res.on("close", () => { if (!res.writableEnded) gone = true; });
+      const g = await generate(host, pr.ids, genOpts(b), undefined, () => gone);
+      if (g.cancelled) { if (!res.destroyed) sendJson(res, 499, { error: "cancelled" }); return; }
       return sendJson(res, 200, {
         completion: g.text, stopReason: g.stopReason,
         prompt: { tokens: pr.tokens, truncated: pr.truncated, prefixChars: pr.prefixChars },
@@ -246,6 +265,10 @@ export async function startServer(opts: ServerOptions = {}): Promise<RunningServ
       const traceMs = performance.now() - t0;
       if (stale()) { send({ type: "cancelled", reqId }); return; }
       send({ type: "trace", reqId, ms: Math.round(traceMs), ...trace });
+      if (num(b.maxTokens) === 0) {
+        send({ type: "done", reqId, completion: "", stopReason: "maxTokens", steps: 0, traceMs: Math.round(traceMs), totalMs: Math.round(performance.now() - t0) });
+        return;
+      }
       const g = await generate(host, pr.ids, genOpts(b), (s) => {
         if (!stale()) send({ type: "step", reqId, ...s, ms: Math.round(performance.now() - t0) });
       }, stale);
