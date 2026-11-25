@@ -1,0 +1,53 @@
+{
+  "note": "6-minute pilots, base preset (1.07M params), 16 worker threads, budget-aware warmup+cosine, ctx curriculum 64->128 at rho 0.3. Val = commons-codec (65,536 tokens). Run under background load from other processes.",
+  "runs": [
+    {
+      "run": "pilot-lr3e-3",
+      "peakLr": 0.003,
+      "batchPerWorker": 4,
+      "tokensPerStepAtT128": 8192,
+      "steps": 139,
+      "tokens": 892928,
+      "minutes": 6.4,
+      "tokensPerSec": 2567,
+      "bestValLossEma": 5.1529,
+      "finalValLossRaw": 5.1242
+    },
+    {
+      "run": "pilot-lr6e-3",
+      "peakLr": 0.006,
+      "batchPerWorker": 4,
+      "tokensPerStepAtT128": 8192,
+      "steps": 132,
+      "tokens": 864256,
+      "minutes": 6.4,
+      "tokensPerSec": 2489,
+      "bestValLossEma": 5.8398,
+      "finalValLossRaw": 5.7812
+    },
+    {
+      "run": "pilot-lr3e-3-b2",
+      "peakLr": 0.003,
+      "batchPerWorker": 2,
+      "tokensPerStepAtT128": 4096,
+      "steps": 282,
+      "tokens": 868352,
+      "minutes": 6.2,
+      "tokensPerSec": 2455,
+      "bestValLossEma": 4.4163,
+      "finalValLossRaw": 4.3887
+    },
+    {
+      "run": "pilot-lr3e-3-b1",
+      "peakLr": 0.003,
+      "batchPerWorker": 1,
+      "tokensPerStepAtT128": 2048,
+      "steps": 569,
+      "tokens": 904192,
+      "minutes": 6.2,
+      "tokensPerSec": 2567,
+      "bestValLossEma": 4.2538,
+      "finalValLossRaw": 4.2432
+    }
+  ]
+}

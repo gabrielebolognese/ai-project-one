@@ -1,0 +1,17 @@
+{
+  "run": "release",
+  "steps": 10195,
+  "tokens": 14661632,
+  "elapsedSec": 8328.0878815,
+  "tokensPerSec": 1760.5039966700308,
+  "bestValLoss": 2.592545710504055,
+  "bestStep": 9875,
+  "bestTokens": 14006272,
+  "bestElapsedSec": 7816.703561,
+  "finalValLossEma": 2.592545710504055,
+  "numParams": 1071872,
+  "sustainedGflops": 11.768391772428247,
+  "evals": 13,
+  "completed": false,
+  "stopNote": "The 150-minute run did not reach its end-of-run record. Its last surviving log line is at 138.8 min (step 10195, rho 0.925, LR 3.37e-4). The process was gone when this step was re-done, and the worktree's copy of its output folder had been removed by a branch reset between worker attempts. So the cause and the exact moment of termination were not observed. This log is a copy taken while the run was still going, so the record after 138.8 min is missing. weights.bin is the trainer's own best-on-validation EMA checkpoint, written by the trainer at step 9875 (130.3 min, val loss 2.5925 on commons-codec). The next scheduled evaluation was at about 140 min. last.bin and the optimizer state were never written. elapsedSec, steps and tokens are taken from the last surviving log line, and tokensPerSec includes evaluation time. Other processes on the laptop (including other Foreman tasks) were also using the CPU during the run, so throughput is below the bench figure."
+}

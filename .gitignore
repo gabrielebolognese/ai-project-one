@@ -8,3 +8,5 @@ models/*
 *.log
 .DS_Store
 !models/tokenizer.json
+models/release/last.bin
+logs/

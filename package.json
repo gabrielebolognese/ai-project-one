@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "train": "tsx scripts/train.ts",
+    "evaluate": "tsx scripts/evaluate.ts",
     "bench": "tsx scripts/bench.ts",
     "corpus": "tsx scripts/fetch-corpus.ts",
     "tokenizer": "tsx scripts/train-tokenizer.ts",

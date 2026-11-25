@@ -1,0 +1,904 @@
+{
+  "date": "2026-11-25T01:00:29.019Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 5700U with Radeon Graphics",
+    "logicalCores": 16,
+    "totalMemGB": 15.3,
+    "node": "v22.16.0",
+    "kernels": "wasm",
+    "evalThreads": 1
+  },
+  "protocol": {
+    "split": "test (held-out repos, never used for tokenizer or model training)",
+    "repos": [
+      "jhy/jsoup",
+      "google/gson",
+      "square/retrofit"
+    ],
+    "files": 709,
+    "testTokens": 1677739,
+    "nextToken": {
+      "windows": 2700,
+      "windowTokens": 128,
+      "minContext": 32,
+      "scoredTokens": 259200
+    },
+    "lineCompletion": {
+      "lines": 500,
+      "kinds": {
+        "code": 435,
+        "comment": 65
+      },
+      "seed": 2026,
+      "maxNewTokens": 32,
+      "modelPromptTokens": "last ctx-32",
+      "ngramContextTokens": 4,
+      "exactMatch": "right-trimmed string equality",
+      "editSim": "1 - Levenshtein/max(len)"
+    },
+    "baselinesTrainedOn": {
+      "split": "train",
+      "tokens": 24197288
+    }
+  },
+  "ngram": {
+    "order": 5,
+    "smoothing": "interpolated modified Kneser-Ney (Chen & Goodman 1998), counts from data/train.bin",
+    "buildSec": 62.91611459999999,
+    "uniqueNgrams": [
+      1970,
+      340354,
+      2068931,
+      4428384,
+      6555665
+    ],
+    "discounts": [
+      [
+        0.2083,
+        1.1283,
+        2.1824
+      ],
+      [
+        0.5528,
+        1.1582,
+        1.6278
+      ],
+      [
+        0.7069,
+        1.1938,
+        1.5441
+      ],
+      [
+        0.7964,
+        1.2699,
+        1.5477
+      ],
+      [
+        0.6293,
+        1.3261,
+        1.2493
+      ]
+    ],
+    "cache": {
+      "maxContext": 3,
+      "maxBack": 2048,
+      "beta": 2,
+      "betaWindow": 2,
+      "valNllByBeta": {
+        "1": 2.238312293656692,
+        "2": 2.1950633252247918,
+        "4": 2.2046310107212395,
+        "8": 2.264257581569838,
+        "16": 2.3643028229573173,
+        "0.5": 2.3292899917861227
+      },
+      "valNllByBetaWindow": {
+        "1": 2.8834891327043666,
+        "2": 2.843227974007049,
+        "4": 2.849679882138237,
+        "8": 2.8932193813546685,
+        "16": 2.959930053445863,
+        "0.5": 2.971408967836315
+      }
+    }
+  },
+  "methods": [
+    {
+      "name": "transformer (release)",
+      "kind": "network",
+      "description": "4L d128 4H ctx128, tied embeddings, trained from scratch in TypeScript on this CPU",
+      "params": 1071872,
+      "sizeMB": 4.287488,
+      "weightsSha256": "d91725ce74defe8167bca25e692b043797b69717fe0a4a4a9cca8169406c77b2",
+      "training": {
+        "dir": "models/release",
+        "status": "stopped-early",
+        "checkpoint": {
+          "step": 9875,
+          "tokens": 14006272,
+          "valLoss": 2.592545710504055,
+          "t": 7816.678751400001
+        },
+        "note": "The 150-minute run did not reach its end-of-run record. Its last surviving log line is at 138.8 min (step 10195, rho 0.925, LR 3.37e-4). The process was gone when this step was re-done, and the worktree's copy of its output folder had been removed by a branch reset between worker attempts. So the cause and the exact moment of termination were not observed. This log is a copy taken while the run was still going, so the record after 138.8 min is missing. weights.bin is the trainer's own best-on-validation EMA checkpoint, written by the trainer at step 9875 (130.3 min, val loss 2.5925 on commons-codec). The next scheduled evaluation was at about 140 min. last.bin and the optimizer state were never written. elapsedSec, steps and tokens are taken from the last surviving log line, and tokensPerSec includes evaluation time. Other processes on the laptop (including other Foreman tasks) were also using the CPU during the run, so throughput is below the bench figure.",
+        "budgetMin": 150,
+        "elapsedMin": 138.80146469166667,
+        "tokensSeen": 14661632,
+        "steps": 10195,
+        "tokensPerSec": 1760.5039966700308,
+        "tokensPerParam": 13.678528779555768,
+        "bestValLoss": 2.592545710504055,
+        "bestStep": 9875,
+        "peakLr": 0.003,
+        "workers": 16,
+        "batchPerWorker": 1,
+        "config": {
+          "vocabSize": 2048,
+          "ctx": 128,
+          "dModel": 128,
+          "nLayers": 4,
+          "nHeads": 4,
+          "dMlp": 512
+        }
+      },
+      "nextToken": {
+        "n": 259200,
+        "top1": 0.49517746913580246,
+        "top5": 0.7005825617283951,
+        "nll": 2.5564323354229073,
+        "ppl": 12.889748885547702,
+        "perRepo": {
+          "jhy/jsoup": {
+            "n": 116832,
+            "top1": 0.4539852095316352,
+            "top5": 0.6584668583949603,
+            "nll": 2.8854916017132535,
+            "ppl": 17.912371183775615
+          },
+          "google/gson": {
+            "n": 94560,
+            "top1": 0.5246615905245346,
+            "top5": 0.7335871404399323,
+            "nll": 2.272629420600983,
+            "ppl": 9.704885520301197
+          },
+          "square/retrofit": {
+            "n": 47808,
+            "top1": 0.5375251004016064,
+            "top5": 0.7382237282463187,
+            "nll": 2.313622584467768,
+            "ppl": 10.110986293118145
+          }
+        },
+        "perClass": {
+          "identifier/keyword": {
+            "n": 163218,
+            "top1": 0.42638066879878445,
+            "top5": 0.6112070972564301,
+            "nll": 3.0993055980543174,
+            "ppl": 22.182542331503218
+          },
+          "punctuation/operator": {
+            "n": 60556,
+            "top1": 0.6350485501023846,
+            "top5": 0.8670486822115067,
+            "nll": 1.5412053343904124,
+            "ppl": 4.670216051851396
+          },
+          "whitespace": {
+            "n": 21246,
+            "top1": 0.6796573472653676,
+            "top5": 0.9099124541090088,
+            "nll": 1.219667943557052,
+            "ppl": 3.3860631828284125
+          },
+          "literal/other": {
+            "n": 14180,
+            "top1": 0.41332863187588154,
+            "top5": 0.7047954866008462,
+            "nll": 2.6461569026961795,
+            "ppl": 14.099747687157539
+          }
+        },
+        "msPerToken": 0.6474510989583332
+      },
+      "line": {
+        "n": 500,
+        "exactMatch": 0.194,
+        "editSim": 0.42696953496737894,
+        "byKind": {
+          "code": {
+            "n": 435,
+            "exactMatch": 0.20689655172413793,
+            "editSim": 0.44125852905267576
+          },
+          "comment": {
+            "n": 65,
+            "exactMatch": 0.1076923076923077,
+            "editSim": 0.33134318993500744
+          }
+        },
+        "msPerCompletion": {
+          "mean": 80.9542825999991,
+          "p50": 68.86019999999553,
+          "p95": 167.76419999997597
+        },
+        "avgGeneratedTokens": 9.462,
+        "backgroundLoad": {
+          "machineBusyPct": 98.1,
+          "otherProcessesCores": 14.62
+        }
+      }
+    },
+    {
+      "name": "transformer (lab-preview)",
+      "kind": "network",
+      "description": "4L d128 4H ctx128, tied embeddings, trained from scratch in TypeScript on this CPU",
+      "params": 1071872,
+      "sizeMB": 4.287488,
+      "weightsSha256": "ab0cd68664f5b6e510d8f4547023af95088a5db3f91cc7b6f3fb53469a833415",
+      "training": {
+        "dir": "models/lab-preview",
+        "status": "done",
+        "checkpoint": {
+          "step": 572,
+          "tokens": 2595840,
+          "valLoss": 3.6436150844674557,
+          "t": 1368.0538745000001
+        },
+        "budgetMin": 22,
+        "elapsedMin": 22.809901353333334,
+        "tokensSeen": 2595840,
+        "steps": 572,
+        "tokensPerSec": 2213.077616509313,
+        "tokensPerParam": 2.421781705278242,
+        "bestValLoss": 3.6436150844674557,
+        "bestStep": 572,
+        "peakLr": 0.003,
+        "workers": 6,
+        "batchPerWorker": 8,
+        "config": {
+          "vocabSize": 2048,
+          "ctx": 128,
+          "dModel": 128,
+          "nLayers": 4,
+          "nHeads": 4,
+          "dMlp": 512
+        }
+      },
+      "nextToken": {
+        "n": 259200,
+        "top1": 0.2983719135802469,
+        "top5": 0.5138233024691358,
+        "nll": 3.7104378673159406,
+        "ppl": 40.871698990576824,
+        "perRepo": {
+          "jhy/jsoup": {
+            "n": 116832,
+            "top1": 0.2646791974801424,
+            "top5": 0.4692378800328677,
+            "nll": 4.0345991356416215,
+            "ppl": 56.52025873927789
+          },
+          "google/gson": {
+            "n": 94560,
+            "top1": 0.3297377326565144,
+            "top5": 0.5539763113367174,
+            "nll": 3.426020959768328,
+            "ppl": 30.754027453333887
+          },
+          "square/retrofit": {
+            "n": 47808,
+            "top1": 0.318670515394913,
+            "top5": 0.5433609437751004,
+            "nll": 3.4808121451914404,
+            "ppl": 32.48609479085046
+          }
+        },
+        "perClass": {
+          "identifier/keyword": {
+            "n": 163218,
+            "top1": 0.18956242571285029,
+            "top5": 0.3770478746216716,
+            "nll": 4.504300735078298,
+            "ppl": 90.40510482241453
+          },
+          "punctuation/operator": {
+            "n": 60556,
+            "top1": 0.5089338793843715,
+            "top5": 0.7652090626857785,
+            "nll": 2.2692660780362277,
+            "ppl": 9.672299495444848
+          },
+          "whitespace": {
+            "n": 21246,
+            "top1": 0.5831685964416832,
+            "top5": 0.858326273180834,
+            "nll": 1.6477637451268734,
+            "ppl": 5.195348703093117
+          },
+          "literal/other": {
+            "n": 14180,
+            "top1": 0.22489421720733427,
+            "top5": 0.4984485190409027,
+            "nll": 3.817804843424521,
+            "ppl": 45.50420973951076
+          }
+        },
+        "msPerToken": 0.6267389962384259
+      },
+      "line": {
+        "n": 500,
+        "exactMatch": 0.126,
+        "editSim": 0.30161724821065344,
+        "byKind": {
+          "code": {
+            "n": 435,
+            "exactMatch": 0.13333333333333333,
+            "editSim": 0.30895597778690853
+          },
+          "comment": {
+            "n": 65,
+            "exactMatch": 0.07692307692307693,
+            "editSim": 0.2525042118157155
+          }
+        },
+        "msPerCompletion": {
+          "mean": 84.08897799999941,
+          "p50": 67.00280000001658,
+          "p95": 167.87109999998938
+        },
+        "avgGeneratedTokens": 11.478,
+        "backgroundLoad": {
+          "machineBusyPct": 96,
+          "otherProcessesCores": 14.28
+        }
+      }
+    },
+    {
+      "name": "5-gram Kneser-Ney",
+      "kind": "baseline",
+      "description": "interpolated modified Kneser-Ney token 5-gram on the same 24.2M train tokens",
+      "sizeMB": 168.34388,
+      "nextToken": {
+        "n": 259200,
+        "top1": 0.35540123456790124,
+        "top5": 0.5765972222222222,
+        "nll": 3.4914549889158155,
+        "ppl": 32.83368561738302,
+        "perRepo": {
+          "jhy/jsoup": {
+            "n": 116832,
+            "top1": 0.3149394001643385,
+            "top5": 0.5252242536291427,
+            "nll": 3.828831012487834,
+            "ppl": 46.00872316294148
+          },
+          "google/gson": {
+            "n": 94560,
+            "top1": 0.3688980541455161,
+            "top5": 0.600179780033841,
+            "nll": 3.332307483215327,
+            "ppl": 28.0028833935768
+          },
+          "square/retrofit": {
+            "n": 47808,
+            "top1": 0.42758534136546184,
+            "top5": 0.6554969879518072,
+            "nll": 2.9817635680886334,
+            "ppl": 19.72256808418986
+          }
+        },
+        "perClass": {
+          "identifier/keyword": {
+            "n": 163218,
+            "top1": 0.314854979230232,
+            "top5": 0.510887279589261,
+            "nll": 3.953266090540469,
+            "ppl": 52.10526975328943
+          },
+          "punctuation/operator": {
+            "n": 60556,
+            "top1": 0.478945108659753,
+            "top5": 0.7223726798335425,
+            "nll": 2.5001267201880695,
+            "ppl": 12.184037826446742
+          },
+          "whitespace": {
+            "n": 21246,
+            "top1": 0.37268191659606514,
+            "top5": 0.7269133013273087,
+            "nll": 2.4834295642557316,
+            "ppl": 11.982288057859815
+          },
+          "literal/other": {
+            "n": 14180,
+            "top1": 0.2686177715091678,
+            "top5": 0.48519040902679833,
+            "nll": 3.9196283618643037,
+            "ppl": 50.38171753082507
+          }
+        },
+        "msPerToken": 0.080983325231418
+      },
+      "line": {
+        "n": 500,
+        "exactMatch": 0.114,
+        "editSim": 0.3004530578574933,
+        "byKind": {
+          "code": {
+            "n": 435,
+            "exactMatch": 0.11264367816091954,
+            "editSim": 0.29664802114763306
+          },
+          "comment": {
+            "n": 65,
+            "exactMatch": 0.12307692307692308,
+            "editSim": 0.32591753430040227
+          }
+        },
+        "msPerCompletion": {
+          "mean": 1.213486000002129,
+          "p50": 0.9059000000124797,
+          "p95": 3.1463999999687076
+        }
+      }
+    },
+    {
+      "name": "5-gram Kneser-Ney + file cache",
+      "kind": "baseline",
+      "description": "the 5-gram mixed with a file-local cache (longest earlier match of up to 3 tokens, up to 2048 tokens back in the same file; beta=2 tuned on val)",
+      "sizeMB": 168.34388,
+      "nextToken": {
+        "n": 259200,
+        "top1": 0.5823881172839506,
+        "top5": 0.7768827160493827,
+        "nll": 2.208241846246384,
+        "ppl": 9.099703642610379,
+        "perRepo": {
+          "jhy/jsoup": {
+            "n": 116832,
+            "top1": 0.5570134894549439,
+            "top5": 0.7507018625034237,
+            "nll": 2.4470880914832445,
+            "ppl": 11.554651596083591
+          },
+          "google/gson": {
+            "n": 94560,
+            "top1": 0.5891180203045685,
+            "top5": 0.7874048223350254,
+            "nll": 2.090477869191142,
+            "ppl": 8.088779619453566
+          },
+          "square/retrofit": {
+            "n": 47808,
+            "top1": 0.6310868473895582,
+            "top5": 0.8200510374832664,
+            "nll": 1.857482081077714,
+            "ppl": 6.40758266895535
+          }
+        },
+        "perClass": {
+          "identifier/keyword": {
+            "n": 163218,
+            "top1": 0.575371588917889,
+            "top5": 0.7496170765479298,
+            "nll": 2.416575065863144,
+            "ppl": 11.207408870122306
+          },
+          "punctuation/operator": {
+            "n": 60556,
+            "top1": 0.6215899332848933,
+            "top5": 0.839916771253055,
+            "nll": 1.7159329443938072,
+            "ppl": 5.561862000605261
+          },
+          "whitespace": {
+            "n": 21246,
+            "top1": 0.5684834792431517,
+            "top5": 0.8327214534500612,
+            "nll": 1.7980859810441412,
+            "ppl": 6.038079398769861
+          },
+          "literal/other": {
+            "n": 14180,
+            "top1": 0.5165726375176305,
+            "top5": 0.7378702397743301,
+            "nll": 2.5271909247546627,
+            "ppl": 12.518291876247167
+          }
+        },
+        "msPerToken": 0.1053230412808477
+      },
+      "line": {
+        "n": 500,
+        "exactMatch": 0.196,
+        "editSim": 0.40335726729209,
+        "byKind": {
+          "code": {
+            "n": 435,
+            "exactMatch": 0.2045977011494253,
+            "editSim": 0.41338242537861286
+          },
+          "comment": {
+            "n": 65,
+            "exactMatch": 0.13846153846153847,
+            "editSim": 0.33626582471305433
+          }
+        },
+        "msPerCompletion": {
+          "mean": 1.5229156000006479,
+          "p50": 1.0988000000361353,
+          "p95": 3.9799000000348315
+        }
+      }
+    },
+    {
+      "name": "5-gram Kneser-Ney + window cache",
+      "kind": "baseline",
+      "description": "the 5-gram mixed with a cache limited to the same tokens the network sees (the window before the target, at most 128 tokens; 96 for line completion; beta=2 tuned on val)",
+      "sizeMB": 168.34388,
+      "nextToken": {
+        "n": 259200,
+        "top1": 0.4594097222222222,
+        "top5": 0.6673418209876543,
+        "nll": 2.9424149533821207,
+        "ppl": 18.961582402317447,
+        "perRepo": {
+          "jhy/jsoup": {
+            "n": 116832,
+            "top1": 0.42882087099424815,
+            "top5": 0.6296904957545878,
+            "nll": 3.2278733448515493,
+            "ppl": 25.225952983485673
+          },
+          "google/gson": {
+            "n": 94560,
+            "top1": 0.4736252115059222,
+            "top5": 0.6890122673434856,
+            "nll": 2.7735321918931395,
+            "ppl": 16.015102637773662
+          },
+          "square/retrofit": {
+            "n": 47808,
+            "top1": 0.5060450133868809,
+            "top5": 0.7164909638554217,
+            "nll": 2.5788540249650196,
+            "ppl": 13.182023231113737
+          }
+        },
+        "perClass": {
+          "identifier/keyword": {
+            "n": 163218,
+            "top1": 0.4389956990037863,
+            "top5": 0.6202869781519195,
+            "nll": 3.2816241626874416,
+            "ppl": 26.618971149441883
+          },
+          "punctuation/operator": {
+            "n": 60556,
+            "top1": 0.5289318977475395,
+            "top5": 0.7683961952572825,
+            "nll": 2.2112869634072565,
+            "ppl": 9.127455538774303
+          },
+          "whitespace": {
+            "n": 21246,
+            "top1": 0.4625341240704133,
+            "top5": 0.7787348206721265,
+            "nll": 2.195593145782968,
+            "ppl": 8.98532908657025
+          },
+          "literal/other": {
+            "n": 14180,
+            "top1": 0.3928067700987306,
+            "top5": 0.6105077574047955,
+            "nll": 3.2792354019578984,
+            "ppl": 26.555460682354266
+          }
+        },
+        "msPerToken": 0.1053230412808477
+      },
+      "line": {
+        "n": 500,
+        "exactMatch": 0.14,
+        "editSim": 0.33366490069028104,
+        "byKind": {
+          "code": {
+            "n": 435,
+            "exactMatch": 0.14022988505747128,
+            "editSim": 0.3370226065973761
+          },
+          "comment": {
+            "n": 65,
+            "exactMatch": 0.13846153846153847,
+            "editSim": 0.31119409961972405
+          }
+        },
+        "msPerCompletion": {
+          "mean": 1.636048799997894,
+          "p50": 1.0860000000102445,
+          "p95": 3.8636000000406057
+        }
+      }
+    },
+    {
+      "name": "most-frequent token",
+      "kind": "baseline",
+      "description": "always predicts the most frequent training tokens (unigram ranking; add-one probabilities for perplexity)",
+      "sizeMB": 0.016384,
+      "nextToken": {
+        "n": 259200,
+        "top1": 0.04527006172839506,
+        "top5": 0.10715277777777778,
+        "nll": 6.496134670116694,
+        "ppl": 662.5756036833814,
+        "perRepo": {
+          "jhy/jsoup": {
+            "n": 116832,
+            "top1": 0.04232573267597919,
+            "top5": 0.10456039441248972,
+            "nll": 6.49517791243773,
+            "ppl": 661.9419825459412
+          },
+          "google/gson": {
+            "n": 94560,
+            "top1": 0.04609771573604061,
+            "top5": 0.11092428087986464,
+            "nll": 6.506070530483427,
+            "ppl": 669.1916761210804
+          },
+          "square/retrofit": {
+            "n": 47808,
+            "top1": 0.05082831325301205,
+            "top5": 0.1060282797858099,
+            "nll": 6.478820516757615,
+            "ppl": 651.2024107919806
+          }
+        },
+        "perClass": {
+          "identifier/keyword": {
+            "n": 163218,
+            "top1": 0,
+            "top5": 0,
+            "nll": 7.255626535043205,
+            "ppl": 1416.0499301582713
+          },
+          "punctuation/operator": {
+            "n": 60556,
+            "top1": 0.19377105489134025,
+            "top5": 0.338265407226369,
+            "nll": 4.8432057368787165,
+            "ppl": 126.87542973684086
+          },
+          "whitespace": {
+            "n": 21246,
+            "top1": 0,
+            "top5": 0.34312341146568764,
+            "nll": 5.254077765684915,
+            "ppl": 191.34493958907115
+          },
+          "literal/other": {
+            "n": 14180,
+            "top1": 0,
+            "top5": 0,
+            "nll": 6.673903517987553,
+            "ppl": 791.4791352795363
+          }
+        },
+        "msPerToken": 0
+      },
+      "line": {
+        "n": 500,
+        "exactMatch": 0,
+        "editSim": 0.013059890016344005,
+        "byKind": {
+          "code": {
+            "n": 435,
+            "exactMatch": 0,
+            "editSim": 0.013262207204395646
+          },
+          "comment": {
+            "n": 65,
+            "exactMatch": 0,
+            "editSim": 0.011705921142459942
+          }
+        },
+        "msPerCompletion": {
+          "mean": 0.02747519999742508,
+          "p50": 0.020299999974668026,
+          "p95": 0.035299999988637865
+        }
+      }
+    }
+  ],
+  "pairedLineComparison": {
+    "both": 45,
+    "onlyNetwork": 52,
+    "onlyNgram": 12,
+    "neither": 391,
+    "signTestP": 4.566610700445412e-7
+  },
+  "examples": [
+    {
+      "file": "square/retrofit/retrofit-adapters/rxjava3/src/test/java/retrofit2/adapter/rxjava3/CompletableThrowingTest.java",
+      "line": 10,
+      "kind": "code",
+      "prefix": "import io.reactivex.rxjava3",
+      "target": ".plugins.RxJavaPlugins;",
+      "predictions": {
+        "transformer (release)": ".PublishProcessor;",
+        "transformer (lab-preview)": ".annotations.GwtIncompatible;",
+        "5-gram Kneser-Ney": " = new YearMonthDay(2005, 6, 9, 10, 20, 30, 40);",
+        "5-gram Kneser-Ney + file cache": ".exceptions.Exceptions;",
+        "5-gram Kneser-Ney + window cache": ".exceptions.Exceptions;",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "jhy/jsoup/src/test/java/org/jsoup/integration/netty/NettyProxyServer.java",
+      "line": 102,
+      "kind": "code",
+      "prefix": "     Binds a proxy listener with the",
+      "target": " supplied auth mode",
+      "predictions": {
+        "transformer (release)": " specified listener.",
+        "transformer (lab-preview)": " given {@code true}",
+        "5-gram Kneser-Ney": " recorded, the timestamp is not-null, it will only be written to the stream.",
+        "5-gram Kneser-Ney + file cache": " plaintext = \"ProxyChannel.localAddress()).getPort();",
+        "5-gram Kneser-Ney + window cache": " recorded, the recorded, the recorded, the recorded, the recorded, the rec",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "square/retrofit/retrofit/src/main/java/retrofit2/RequestFactory.java",
+      "line": 610,
+      "kind": "code",
+      "prefix": "        Type mapType = Utils.getSupertype(type, rawParameterType,",
+      "target": " Map.class);",
+      "predictions": {
+        "transformer (release)": " rawType);",
+        "transformer (lab-preview)": " \"value\");",
+        "5-gram Kneser-Ney": " true)) {",
+        "5-gram Kneser-Ney + file cache": " Map.class);",
+        "5-gram Kneser-Ney + window cache": " \"@FieldMap parameter type must be Map.\");",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "jhy/jsoup/src/test/java/org/jsoup/select/CssTest.java",
+      "line": 177,
+      "kind": "code",
+      "prefix": "        assertEquals(\"p\", sel.get(2).tag",
+      "target": "Name());",
+      "predictions": {
+        "transformer (release)": "Name());",
+        "transformer (lab-preview)": "());",
+        "5-gram Kneser-Ney": ");",
+        "5-gram Kneser-Ney + file cache": "Name());",
+        "5-gram Kneser-Ney + window cache": "Name());",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "square/retrofit/retrofit/java-test/src/test/java/retrofit2/CallAdapterTest.java",
+      "line": 46,
+      "kind": "code",
+      "prefix": "    Parameterized",
+      "target": "Type wild =",
+      "predictions": {
+        "transformer (release)": "Type type =",
+        "transformer (lab-preview)": "Test",
+        "5-gram Kneser-Ney": "Type parameterizedType.getActualTypeArguments()[0];",
+        "5-gram Kneser-Ney + file cache": "Type) new TypeToken<List<String>>() {}.getType();",
+        "5-gram Kneser-Ney + window cache": "Type) new TypeCapture<Map<String, String> map = new TypeToken<Map<String, String> map = new TypeToken",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "jhy/jsoup/src/main/java/org/jsoup/select/Evaluator.java",
+      "line": 147,
+      "kind": "code",
+      "prefix": "    protected int",
+      "target": " cost() {",
+      "predictions": {
+        "transformer (release)": " get(int[][] array, int[] array, int[] array, int[] array, int[] array, int[] array, int[] array, int",
+        "transformer (lab-preview)": " getCaped() {",
+        "5-gram Kneser-Ney": " _streamWriteFeatures;",
+        "5-gram Kneser-Ney + file cache": " _streamWriteFeatures the behavior in {@code (node instanceof Element) {",
+        "5-gram Kneser-Ney + window cache": " _streamWriteFeatures;",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "google/gson/gson/src/test/java/com/google/gson/functional/GsonVersionDiagnosticsTest.java",
+      "line": 3,
+      "kind": "code",
+      "prefix": "import static com.",
+      "target": "google.common.truth.Truth.assertThat;",
+      "predictions": {
+        "transformer (release)": "google.common.base.Preconditions.checkNotNull;",
+        "transformer (lab-preview)": "google.common.collect.collect.collect.collect.collect.collect.collect.collect.collect.collect.collect.collect.collect.collect.",
+        "5-gram Kneser-Ney": "google.common.collect.testing.features.CollectionSize;",
+        "5-gram Kneser-Ney + file cache": "google.common.google.common.google.common.google.common.google.common.google.common.google.common.google.common.",
+        "5-gram Kneser-Ney + window cache": "google.common.google.common.google.common.google.common.google.common.google.common.google.common.google.common.",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "google/gson/gson/src/main/java/com/google/gson/stream/JsonReader.java",
+      "line": 508,
+      "kind": "comment",
+      "prefix": "   * @throws Illegal",
+      "target": "StateException if the next token is not the end of an object.",
+      "predictions": {
+        "transformer (release)": "StateException if the current is not initialized",
+        "transformer (lab-preview)": "StateException if the value is not be null.",
+        "5-gram Kneser-Ney": "StateException(\"No instances!\");",
+        "5-gram Kneser-Ney + file cache": "StateException if the next token from the JSON stream and asserts that it is the end of the current",
+        "5-gram Kneser-Ney + window cache": "StateException(\"BEGIN_OBJECT);",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "jhy/jsoup/src/main/java/org/jsoup/helper/AuthenticationHandler.java",
+      "line": 5,
+      "kind": "code",
+      "prefix": "import java.lang",
+      "target": ".reflect.Constructor;",
+      "predictions": {
+        "transformer (release)": ".annotation.Retention;",
+        "transformer (lab-preview)": ".concurrent.concurrent.concurrent.Serializable;",
+        "5-gram Kneser-Ney": ".reflect.Method;",
+        "5-gram Kneser-Ney + file cache": ".jsoup.helpersoup.helpers.jsoup.helpers.jsoup",
+        "5-gram Kneser-Ney + window cache": ".jsoup.helpersoup.helpers.jsoup.helpers.jsoup",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "square/retrofit/retrofit-mock/src/main/java/retrofit2/mock/BehaviorDelegate.java",
+      "line": 51,
+      "kind": "code",
+      "prefix": "              Service",
+      "target": "MethodAdapterInfo adapterInfo = parseServiceMethodAdapterInfo(method);",
+      "predictions": {
+        "transformer (release)": ".getProxyInstance(service);",
+        "transformer (lab-preview)": ".get(new HashSet(new HashSet<>(new HashSet<>()), \"b\", \"b\", \"b\", \"b\",",
+        "5-gram Kneser-Ney": ".class).start();",
+        "5-gram Kneser-Ney + file cache": " executor;",
+        "5-gram Kneser-Ney + window cache": ".getClassLoader(),",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "google/gson/metrics/src/main/java/com/google/gson/metrics/BagOfPrimitivesDeserializationBenchmark.java",
+      "line": 89,
+      "kind": "code",
+      "prefix": "            Class",
+      "target": "<?> fieldType = field.getType();",
+      "predictions": {
+        "transformer (release)": "<?> cls = cls.getDeclaredFields();",
+        "transformer (lab-preview)": "<?>[] value = null;",
+        "5-gram Kneser-Ney": "Util.throwIfRTE(t);",
+        "5-gram Kneser-Ney + file cache": "Util.nextName();",
+        "5-gram Kneser-Ney + window cache": "Util.getTypeDescription(name)) {",
+        "most-frequent token": "................................"
+      }
+    },
+    {
+      "file": "google/gson/test-shrinker/src/main/java/com/example/ClassWithHasArgsConstructor.java",
+      "line": 8,
+      "kind": "code",
+      "prefix": "  public int i",
+      "target": ";",
+      "predictions": {
+        "transformer (release)": ";",
+        "transformer (lab-preview)": "temy() {",
+        "5-gram Kneser-Ney": ";",
+        "5-gram Kneser-Ney + file cache": ";",
+        "5-gram Kneser-Ney + window cache": ";",
+        "most-frequent token": "................................"
+      }
+    }
+  ],
+  "elapsedSec": 631.8155782
+}

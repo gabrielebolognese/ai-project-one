@@ -1,0 +1,560 @@
+{
+  "format": "jal-v1",
+  "model": {
+    "vocabSize": 2048,
+    "ctx": 128,
+    "dModel": 128,
+    "nLayers": 4,
+    "nHeads": 4,
+    "dMlp": 512
+  },
+  "train": {
+    "run": "release",
+    "modelsDir": "models",
+    "budgetMin": 150,
+    "workers": 16,
+    "batchPerWorker": 1,
+    "lr": {
+      "peakLr": 0.003,
+      "minLrFrac": 0.1,
+      "warmupSteps": 200,
+      "warmupRho": 0.03
+    },
+    "ctx": {
+      "enabled": true,
+      "startCtx": 64,
+      "fullCtx": 128,
+      "switchRho": 0.3
+    },
+    "weightDecay": 0.1,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "clip": 1,
+    "emaDecay": 0.999,
+    "evalEveryMin": 10,
+    "evalTokens": 131072,
+    "logEverySec": 15,
+    "seed": 1
+  },
+  "preset": "base",
+  "data": {
+    "dir": "data",
+    "train": 24197288,
+    "val": 800270
+  },
+  "flopsPerToken": 6684672,
+  "status": "stopped-early",
+  "best": {
+    "step": 9875,
+    "tokens": 14006272,
+    "valLoss": 2.592545710504055,
+    "t": 7816.678751400001
+  },
+  "weightsFile": "weights.bin",
+  "numParams": 1071872,
+  "tensors": [
+    {
+      "name": "tok_emb",
+      "shape": [
+        2048,
+        128
+      ],
+      "offset": 0,
+      "numel": 262144,
+      "dtype": "f32"
+    },
+    {
+      "name": "pos_emb",
+      "shape": [
+        128,
+        128
+      ],
+      "offset": 262144,
+      "numel": 16384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.ln1.g",
+      "shape": [
+        128
+      ],
+      "offset": 278528,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.ln1.b",
+      "shape": [
+        128
+      ],
+      "offset": 278656,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.attn.qkv.W",
+      "shape": [
+        384,
+        128
+      ],
+      "offset": 278784,
+      "numel": 49152,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.attn.qkv.b",
+      "shape": [
+        384
+      ],
+      "offset": 327936,
+      "numel": 384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.attn.proj.W",
+      "shape": [
+        128,
+        128
+      ],
+      "offset": 328320,
+      "numel": 16384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.attn.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 344704,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.ln2.g",
+      "shape": [
+        128
+      ],
+      "offset": 344832,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.ln2.b",
+      "shape": [
+        128
+      ],
+      "offset": 344960,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.mlp.fc.W",
+      "shape": [
+        512,
+        128
+      ],
+      "offset": 345088,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.mlp.fc.b",
+      "shape": [
+        512
+      ],
+      "offset": 410624,
+      "numel": 512,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.mlp.proj.W",
+      "shape": [
+        128,
+        512
+      ],
+      "offset": 411136,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.0.mlp.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 476672,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.ln1.g",
+      "shape": [
+        128
+      ],
+      "offset": 476800,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.ln1.b",
+      "shape": [
+        128
+      ],
+      "offset": 476928,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.attn.qkv.W",
+      "shape": [
+        384,
+        128
+      ],
+      "offset": 477056,
+      "numel": 49152,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.attn.qkv.b",
+      "shape": [
+        384
+      ],
+      "offset": 526208,
+      "numel": 384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.attn.proj.W",
+      "shape": [
+        128,
+        128
+      ],
+      "offset": 526592,
+      "numel": 16384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.attn.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 542976,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.ln2.g",
+      "shape": [
+        128
+      ],
+      "offset": 543104,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.ln2.b",
+      "shape": [
+        128
+      ],
+      "offset": 543232,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.mlp.fc.W",
+      "shape": [
+        512,
+        128
+      ],
+      "offset": 543360,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.mlp.fc.b",
+      "shape": [
+        512
+      ],
+      "offset": 608896,
+      "numel": 512,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.mlp.proj.W",
+      "shape": [
+        128,
+        512
+      ],
+      "offset": 609408,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.1.mlp.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 674944,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.ln1.g",
+      "shape": [
+        128
+      ],
+      "offset": 675072,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.ln1.b",
+      "shape": [
+        128
+      ],
+      "offset": 675200,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.attn.qkv.W",
+      "shape": [
+        384,
+        128
+      ],
+      "offset": 675328,
+      "numel": 49152,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.attn.qkv.b",
+      "shape": [
+        384
+      ],
+      "offset": 724480,
+      "numel": 384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.attn.proj.W",
+      "shape": [
+        128,
+        128
+      ],
+      "offset": 724864,
+      "numel": 16384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.attn.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 741248,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.ln2.g",
+      "shape": [
+        128
+      ],
+      "offset": 741376,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.ln2.b",
+      "shape": [
+        128
+      ],
+      "offset": 741504,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.mlp.fc.W",
+      "shape": [
+        512,
+        128
+      ],
+      "offset": 741632,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.mlp.fc.b",
+      "shape": [
+        512
+      ],
+      "offset": 807168,
+      "numel": 512,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.mlp.proj.W",
+      "shape": [
+        128,
+        512
+      ],
+      "offset": 807680,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.2.mlp.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 873216,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.ln1.g",
+      "shape": [
+        128
+      ],
+      "offset": 873344,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.ln1.b",
+      "shape": [
+        128
+      ],
+      "offset": 873472,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.attn.qkv.W",
+      "shape": [
+        384,
+        128
+      ],
+      "offset": 873600,
+      "numel": 49152,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.attn.qkv.b",
+      "shape": [
+        384
+      ],
+      "offset": 922752,
+      "numel": 384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.attn.proj.W",
+      "shape": [
+        128,
+        128
+      ],
+      "offset": 923136,
+      "numel": 16384,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.attn.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 939520,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.ln2.g",
+      "shape": [
+        128
+      ],
+      "offset": 939648,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.ln2.b",
+      "shape": [
+        128
+      ],
+      "offset": 939776,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.mlp.fc.W",
+      "shape": [
+        512,
+        128
+      ],
+      "offset": 939904,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.mlp.fc.b",
+      "shape": [
+        512
+      ],
+      "offset": 1005440,
+      "numel": 512,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.mlp.proj.W",
+      "shape": [
+        128,
+        512
+      ],
+      "offset": 1005952,
+      "numel": 65536,
+      "dtype": "f32"
+    },
+    {
+      "name": "blocks.3.mlp.proj.b",
+      "shape": [
+        128
+      ],
+      "offset": 1071488,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "ln_f.g",
+      "shape": [
+        128
+      ],
+      "offset": 1071616,
+      "numel": 128,
+      "dtype": "f32"
+    },
+    {
+      "name": "ln_f.b",
+      "shape": [
+        128
+      ],
+      "offset": 1071744,
+      "numel": 128,
+      "dtype": "f32"
+    }
+  ],
+  "summary": {
+    "run": "release",
+    "steps": 10195,
+    "tokens": 14661632,
+    "elapsedSec": 8328.0878815,
+    "tokensPerSec": 1760.5039966700308,
+    "bestValLoss": 2.592545710504055,
+    "bestStep": 9875,
+    "bestTokens": 14006272,
+    "bestElapsedSec": 7816.703561,
+    "finalValLossEma": 2.592545710504055,
+    "numParams": 1071872,
+    "sustainedGflops": 11.768391772428247,
+    "evals": 13,
+    "completed": false,
+    "stopNote": "The 150-minute run did not reach its end-of-run record. Its last surviving log line is at 138.8 min (step 10195, rho 0.925, LR 3.37e-4). The process was gone when this step was re-done, and the worktree's copy of its output folder had been removed by a branch reset between worker attempts. So the cause and the exact moment of termination were not observed. This log is a copy taken while the run was still going, so the record after 138.8 min is missing. weights.bin is the trainer's own best-on-validation EMA checkpoint, written by the trainer at step 9875 (130.3 min, val loss 2.5925 on commons-codec). The next scheduled evaluation was at about 140 min. last.bin and the optimizer state were never written. elapsedSec, steps and tokens are taken from the last surviving log line, and tokensPerSec includes evaluation time. Other processes on the laptop (including other Foreman tasks) were also using the CPU during the run, so throughput is below the bench figure."
+  }
+}
