@@ -151,7 +151,8 @@ export class ModelHost {
     if (!opts.forceRandom) {
       if (opts.modelDir) {
         const dir = resolve(root, opts.modelDir);
-        candidates.push({ dir, src: { kind: "run", dir, run: dir.split(/[\\/]/).pop() ?? dir } });
+        const isRelease = dir === resolve(modelsDir, "release");
+        candidates.push({ dir, src: isRelease ? { kind: "release", dir } : { kind: "run", dir, run: dir.split(/[\\/]/).pop() ?? dir } });
       } else {
         const rel = join(modelsDir, "release");
         if (isCheckpointDir(rel)) candidates.push({ dir: rel, src: { kind: "release", dir: rel } });

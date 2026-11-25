@@ -16,7 +16,7 @@ interface LogRow {
 interface Run {
   name: string;
   loaded: boolean;
-  config: { model?: Record<string, number>; preset?: string; status?: string; best?: Record<string, number> } | null;
+  config: { model?: Record<string, number>; preset?: string; status?: string; best?: Record<string, number>; train?: { workers?: number } } | null;
   summary: Record<string, number | string> | null;
   log: LogRow[];
 }
@@ -94,7 +94,7 @@ export class NotebookView {
       ], { title: "Budget-aware schedule: LR vs progress ρ = elapsed / budget", xLabel: "ρ", xFmt: (v) => fmt(v, 2), yFmt: (v) => v.toExponential(1) }),
       new LineChart(cv[2], [
         { label: "tokens / s", color: C.teal, points: log.map((r) => [r.t / 60, r.tok_s]) },
-      ], { title: "Throughput on the Ryzen 7 5700U (8 data-parallel workers)", xLabel: "minutes", xFmt: (v) => fmt(v, 0), yFmt: (v) => fmt(v, 0) }),
+      ], { title: `Throughput on the Ryzen 7 5700U (${run?.config?.train?.workers ?? "?"} data-parallel workers)`, xLabel: "minutes", xFmt: (v) => fmt(v, 0), yFmt: (v) => fmt(v, 0) }),
       new LineChart(cv[3], [
         { label: "grad norm", color: C.red, points: log.map((r) => [r.step, r.gnorm]) },
         { label: "context", color: C.purple, points: log.map((r) => [r.step, r.ctx / 100]), dash: [3, 3] },
@@ -121,7 +121,7 @@ function runSummary(run: Run): string {
   const m = run.config?.model;
   if (m) cells.push(["model", `${m.nLayers}L · d${m.dModel} · ${m.nHeads}H · ctx ${m.ctx}`]);
   if (s) {
-    cells.push(["status", "finished"]);
+    cells.push(["status", String(s.completed) === "false" || run.config?.status === "stopped-early" ? "stopped early" : "finished"]);
     cells.push(["steps", fmtInt(Number(s.steps))], ["tokens", `${(Number(s.tokens) / 1e6).toFixed(2)} M`], ["wall clock", `${(Number(s.elapsedSec) / 60).toFixed(1)} min`]);
     cells.push(["best val loss", fmt(Number(s.bestValLoss), 4)], ["throughput", `${fmtInt(Number(s.tokensPerSec))} tok/s`], ["sustained", `${fmt(Number(s.sustainedGflops), 1)} GFLOPS`]);
   } else if (last) {
@@ -197,7 +197,7 @@ function modelCard(nb: Notebook, info: ModelInfo): string {
   const vals = run?.log.filter((r) => r.val_loss !== undefined) ?? [];
   const best = vals.reduce<LogRow | null>((b, r) => (!b || r.val_loss! < b.val_loss! ? r : b), null);
   const warn = info.source.kind === "random" ? `<p class="warn">The server is running a <b>randomly initialised</b> model (no checkpoint in models/). Everything you see is real computation, but the weights are untrained.</p>` : "";
-  const preview = info.source.kind === "run" ? `<p class="warn">Loaded checkpoint: <b>${esc(info.sourceLabel)}</b>. This is a training run, not the release model (models/release has not been produced on this checkout yet).</p>` : "";
+  const preview = info.source.kind === "run" ? `<p class="warn">Loaded checkpoint: <b>${esc(info.sourceLabel)}</b>. This is a training run, not models/release.</p>` : "";
   return `<h2>Model card</h2>${warn}${preview}
   <h3>Model</h3>
   <table class="tbl kvt"><tbody>
