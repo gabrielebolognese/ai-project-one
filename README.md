@@ -8,7 +8,7 @@ laptop (8 cores, 16 GB RAM, no discrete GPU) and runs on the same machine. The w
 3Blue1Brown. You type Java, and it shows the real forward pass for each keystroke: token embeddings, attention
 arcs per head, all 512 GELU neurons of every layer, the residual stream, a logit lens and the softmax over the next
 token. A browser for every weight tensor is included. On held-out repositories the network beats an interpolated
-Kneser-Ney 5-gram on every metric: **49.5% top-1 next-token accuracy against 35.5%**, perplexity 12.9 against 32.8,
+Kneser-Ney 5-gram on every accuracy metric: **49.5% top-1 next-token accuracy against 35.5%**, perplexity 12.9 against 32.8,
 with 4.3 MB of weights against 168 MB of n-gram tables. A file-level cache n-gram still beats it on token metrics;
 see [Findings](#findings).
 
