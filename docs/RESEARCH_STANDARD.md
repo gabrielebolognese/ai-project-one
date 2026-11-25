@@ -1,6 +1,6 @@
 # What made the TinyMind research work strong (and what we copy)
 
-Source: `C:\Users\there\OneDrive\Desktop\research` (read-only), studied 2026-11-24.
+Source: the TinyMind research project (a separate repository, read-only here), studied 2026-11-24.
 Files read: `README.md`, `results/survey.md`, `results/results.md`, `results/results.json`,
 `results/stability_ablation.json`, `results/eval_log.txt`, `results/report.html` (section
 structure), `tinymind/train.py`, `tinymind/bench_gemm.py`, `tinymind/build_report.py`,
