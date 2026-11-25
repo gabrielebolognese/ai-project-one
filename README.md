@@ -110,6 +110,8 @@ long-context completion.
 
 ## Results
 
+Headline: top-1 next-token accuracy of 49.5% for the network against 35.5% for the 5-gram Kneser-Ney baseline.
+
 All numbers are measured on three **held-out repositories** (jhy/jsoup, google/gson, square/retrofit: 709 files and
 1.68M tokens). The tokenizer and the trainer never saw them. Next-token metrics score 259,200 target positions
 (2,700 windows of 128 tokens, positions with at least 32 tokens of context). Every method predicts exactly the same
@@ -165,6 +167,19 @@ Raw numbers: `results/results.json`.
   140 minutes) could have replaced it. Every result above was re-measured on exactly those bytes. Details are in
   `models/release/summary.json`.
 
+## Screenshots
+
+All screenshots show the shipped `models/release` checkpoint and were taken by `npm run screenshots` (headless Chromium).
+
+| | |
+|---|---|
+| ![Attention close-up: full attention matrices per head](docs/screenshots/02-attention-closeup.png) | ![Replay: the forward pass animated stage by stage](docs/screenshots/05-replay-midpass.png) |
+| Heads close-up: every head's attention matrix | Replay pass, mid-animation |
+| ![Weights: the QKV projection of a block as a heatmap](docs/screenshots/03-weights-qkv.png) | ![Weights: cosine similarity of position embeddings](docs/screenshots/06-weights-posemb-cosine.png) |
+| Weights browser: a QKV matrix | Position-embedding cosine similarity |
+| ![Weights: PCA of the vocabulary embeddings](docs/screenshots/08-weights-vocab-pca.png) | ![Lab notebook: training curves, evaluation and model card](docs/screenshots/04-lab-notebook.png) |
+| Vocabulary embedding PCA | Lab notebook: curves, evaluation, model card |
+
 ## Hardware notes
 
 * **Machine:** AMD Ryzen 7 5700U (8 cores / 16 threads, Zen 2), 16 GB RAM, Windows 11 and Node 22. Training and
@@ -197,11 +212,6 @@ results/           results.md / results.json (evaluation), findings.md, bench.js
 docs/              SPEC, DECISIONS, survey, SERVER, WEB, RESEARCH_STANDARD, screenshots/
 data/              corpus and token files (gitignored; SOURCES.md is committed)
 ```
-
-More screenshots: [attention close-up](docs/screenshots/02-attention-closeup.png),
-[replay mid-pass](docs/screenshots/05-replay-midpass.png), [QKV weights](docs/screenshots/03-weights-qkv.png),
-[position-embedding cosine](docs/screenshots/06-weights-posemb-cosine.png),
-[vocabulary PCA](docs/screenshots/08-weights-vocab-pca.png), [lab notebook](docs/screenshots/04-lab-notebook.png).
 
 ## Data and licences
 
